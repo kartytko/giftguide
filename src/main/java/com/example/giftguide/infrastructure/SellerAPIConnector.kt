@@ -14,7 +14,7 @@ class SellerAPIConnector : APIConnector {
                 displayName = "Item from API display name",
                 category = "Category 54",
                 price = Price(
-                        amount = 300,
+                        amount = 300.0,
                         currency = Currency.getInstance("PLN")),
                 redirectUrl = "redirect/link/to/item",
                 photoUrl = "photo/url")
