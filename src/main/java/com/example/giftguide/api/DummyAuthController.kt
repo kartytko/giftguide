@@ -5,25 +5,19 @@ import com.example.giftguide.infrastructure.postgres.UserDetailsRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = ["http://localhost:4200"])
 class DummyAuthController {
 
     @Autowired
     lateinit var userDetailsRepository: UserDetailsRepository
 
-    @PostMapping
-    fun dummyAuth(@RequestBody loginDetails: LoginDetails): ResponseEntity<LoginDetails> {
-        return ResponseEntity(LoginDetails(loginDetails.login), HttpStatus.OK)
-    }
 
     //TODO: Delete v2 mapping.
-    @PostMapping("/v2")
+    @PostMapping()
     fun auth(@RequestBody loginDetails: LoginDetails): ResponseEntity<LoginDetails> {
         val userDetails = userDetailsRepository.findById(loginDetails.login)
         return if (userDetails.isPresent && userDetails.get().password == loginDetails.password) {

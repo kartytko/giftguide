@@ -16,24 +16,10 @@ class WishlistService(private val sellerAPIConnector: SellerAPIConnector) {
 
     fun getUserWishlist(userId: String): List<ItemDetails> {
         val customizedItems = itemDetailsRepository.findByUserId(userId)
+        System.out.println(customizedItems)
 
         //TODO: Fetch the default list (which is directly connected to provider's API) and merge it with customized one.
-        return listOf(
-                ItemDetails(
-                        displayName = "testDisplayName",
-                        category = "testCategory",
-                        price = Price(100.0, Currency.getInstance("PLN")),
-                        redirectUrl = "http://redirect.to/some/page",
-                        photoUrl = "/test/url.jpg"
-                ),
-                ItemDetails(
-                        displayName = "testDisplayName2",
-                        category = "testCategory2",
-                        price = Price(200.0, Currency.getInstance("PLN")),
-                        redirectUrl = null,
-                        photoUrl = "/test2/url2.png"
-                )
-        )
+        return customizedItems.map { it.toItemDetails() }
     }
 
     fun addCustomItemToWishlist(userId: String, customItem: ItemDetails): ItemDetails {
@@ -56,7 +42,8 @@ class WishlistService(private val sellerAPIConnector: SellerAPIConnector) {
             this.category,
             Price(this.amount, Currency.getInstance(this.currency)),
             this.redirectUrl,
-            this.photoUrl)
+            this.photoUrl,
+            this.postgresId)
 
     private fun ItemDetails.toItemDetailsPostgres(userId: String) = ItemDetailsPostgres(displayName = this.displayName,
             category = this.category,
