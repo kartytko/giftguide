@@ -4,6 +4,7 @@ package com.example.giftguide.api
 import com.example.giftguide.domain.ExtendedUserDetails
 import com.example.giftguide.domain.ItemDetails
 import com.example.giftguide.domain.UserDetails
+import com.example.giftguide.infrastructure.FriendsService
 import com.example.giftguide.infrastructure.UserService
 import com.example.giftguide.infrastructure.WishlistService
 import org.springframework.context.annotation.Bean
@@ -27,7 +28,8 @@ import javax.servlet.MultipartConfigElement
 @RequestMapping("/users")
 @CrossOrigin(origins = ["http://localhost:4200"])
 class UserDetailsController(private val userService: UserService,
-                            private val wishlistService: WishlistService) {
+                            private val wishlistService: WishlistService,
+                            private val friendsService: FriendsService) {
 
     @GetMapping("/{userId}")
     fun getUserDetails(@PathVariable("userId") userId: String): ResponseEntity<ExtendedUserDetails> {
@@ -58,9 +60,9 @@ class UserDetailsController(private val userService: UserService,
 
     @GetMapping("/{userId}/friends")
     fun getUsersFriends(@PathVariable("userId") userId: String): ResponseEntity<List<ExtendedUserDetails>> {
-        val friend1 = ExtendedUserDetails("Maria", "Maria", "maria@onet.pl", "https://image.shutterstock.com/image-photo/dog-chihuahua-head-portrait-shorthaired-260nw-720452491.jpg", "maria1")
-        val friend2 = ExtendedUserDetails("Artur", "Artur", "artur@onet.pl", "https://www.thepaws.net/wp-content/uploads/2018/10/funny-chihuahua.jpg", "artur2009")
-        return ResponseEntity(listOf(friend1, friend2), HttpStatus.OK)
+        val allFriends = friendsService.getAllFriends(userId)
+        val allFriendsDetails = allFriends.map { userService.getUserDetails(it.friendId) }
+        return ResponseEntity(allFriendsDetails, HttpStatus.OK)
     }
 
 
